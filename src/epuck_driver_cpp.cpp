@@ -152,7 +152,7 @@ uint8_t debug_count = 0;
 
 int initConnectionWithRobot(void) {
     //fh = open("/dev/i2c-3", O_RDWR);	// open the I2C dev driver for bus 3
-	fh = open("/dev/i2c-4", O_RDWR);	// open the I2C dev driver for bus 4
+	fh = open("/dev/i2c-1", O_RDWR);	// open the I2C dev driver for bus 1
 	return 0;
 }
 
