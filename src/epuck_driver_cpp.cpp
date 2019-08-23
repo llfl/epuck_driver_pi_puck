@@ -1062,9 +1062,10 @@ void initTest(){
 
         packets.msgs      = messages;
         packets.nmsgs     = 1;
-        
+
         int trials = 0;
         while(trials < 3) {
+        std::cout << "[" << epuckname << "] " << "write"<< trials << std::endl;
 		if(ioctl(fh, I2C_RDWR, &packets) < 0) {		
 			trials++;
 			continue;
