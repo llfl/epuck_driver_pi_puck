@@ -152,7 +152,13 @@ uint8_t debug_count = 0;
 
 int initConnectionWithRobot(void) {
     //fh = open("/dev/i2c-3", O_RDWR);	// open the I2C dev driver for bus 3
-	fh = open("/dev/i2c-1", O_RDWR);	// open the I2C dev driver for bus 1
+    // Set the I2C timeout to 20 ms (instead of 1 second). This need to be done on the "swticher" bus channel.
+	int fh1 = open("/dev/i2c-1", O_RDWR);
+	if(ioctl(fh1, I2C_TIMEOUT, 2) < 0) {
+		perror("fail to set i2c1 timeout");
+	}		
+	close(fh1);
+	fh = open("/dev/i2c-4", O_RDWR);	// open the I2C dev driver for bus 4
 	return 0;
 }
 
