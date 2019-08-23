@@ -951,6 +951,121 @@ void handlerLED(const std_msgs::UInt8MultiArray::ConstPtr& msg) {
     }
 }
 
+void initTest(){
+        uint8_t actuators_data[ACTUATORS_SIZE];
+        uint8_t counter = 0;
+        uint8_t actuators_state = 0;
+        struct i2c_rdwr_ioctl_data packets;
+        struct i2c_msg messages[1];
+
+    
+    for(int i = 0; i<10; i++){
+        counter++;
+		if(counter == 20) {
+			counter = 0;
+			switch(actuators_state) {
+				case 0:
+					actuators_data[0] = 0;		// Left speed: 512
+					actuators_data[1] = 2;
+					actuators_data[2] = 0;		// Right speed: -512
+					actuators_data[3] = 0xFE;
+					actuators_data[4] = 0; 		// Speaker sound
+					actuators_data[5] = 0x0F;	// LED1, LED3, LED5, LED7 on/off flag
+					actuators_data[6] = 100;	// LED2 red
+					actuators_data[7] = 0;		// LED2 green
+					actuators_data[8] = 0;		// LED2 blue
+					actuators_data[9] = 100;	// LED4 red
+					actuators_data[10] = 0;		// LED4 green
+					actuators_data[11] = 0;		// LED4 blue
+					actuators_data[12] = 100;	// LED6 red
+					actuators_data[13] = 0;		// LED6 green
+					actuators_data[14] = 0;		// LED6 blue
+					actuators_data[15] = 100;	// LED8 red
+					actuators_data[16] = 0;		// LED8 green
+					actuators_data[17] = 0;		// LED8 blue
+					actuators_data[18] = 0; 	// Settings.
+					actuators_state = 1;
+					break;
+				case 1:
+					actuators_data[0] = 0;		// Left speed: 0
+					actuators_data[1] = 0;
+					actuators_data[2] = 0;		// Right speed: 0
+					actuators_data[3] = 0;
+					actuators_data[4] = 0; 		// Speaker sound
+					actuators_data[5] = 0x0;	// LED1, LED3, LED5, LED7 on/off flag
+					actuators_data[6] = 0;		// LED2 red
+					actuators_data[7] = 100;	// LED2 green
+					actuators_data[8] = 0;		// LED2 blue
+					actuators_data[9] = 0;		// LED4 red
+					actuators_data[10] = 100;	// LED4 green
+					actuators_data[11] = 0;		// LED4 blue
+					actuators_data[12] = 0;		// LED6 red
+					actuators_data[13] = 100;	// LED6 green
+					actuators_data[14] = 0;		// LED6 blue
+					actuators_data[15] = 0;		// LED8 red
+					actuators_data[16] = 100;	// LED8 green
+					actuators_data[17] = 0;		// LED8 blue
+					actuators_data[18] = 0;		// Settings.
+					actuators_state = 2;
+					break;
+				case 2:
+					actuators_data[0] = 0;		// Left speed: 512
+					actuators_data[1] = 2;
+					actuators_data[2] = 0;		// Right speed: -512
+					actuators_data[3] = 0xFE;
+					actuators_data[4] = 0; 		// Speaker sound
+					actuators_data[5] = 0x0F;	// LED1, LED3, LED5, LED7 on/off flag
+					actuators_data[6] = 0;		// LED2 red
+					actuators_data[7] = 0;		// LED2 green
+					actuators_data[8] = 100;	// LED2 blue
+					actuators_data[9] = 0;		// LED4 red
+					actuators_data[10] = 0;		// LED4 green
+					actuators_data[11] = 100;	// LED4 blue
+					actuators_data[12] = 0;		// LED6 red
+					actuators_data[13] = 0;		// LED6 green
+					actuators_data[14] = 100;	// LED6 blue
+					actuators_data[15] = 0;		// LED8 red
+					actuators_data[16] = 0;		// LED8 green
+					actuators_data[17] = 100;	// LED8 blue
+					actuators_data[18] = 0; 	// Settings.
+					actuators_state = 3;
+					break;
+				case 3:
+					actuators_data[0] = 0;		// Left speed: 0
+					actuators_data[1] = 0;
+					actuators_data[2] = 0;		// Right speed: 0
+					actuators_data[3] = 0;
+					actuators_data[4] = 0; 		// Speaker sound
+					actuators_data[5] = 0x0;	// LED1, LED3, LED5, LED7 on/off flag
+					actuators_data[6] = 100;	// LED2 red
+					actuators_data[7] = 100;	// LED2 green
+					actuators_data[8] = 0;		// LED2 blue
+					actuators_data[9] = 100;	// LED4 red
+					actuators_data[10] = 100;	// LED4 green
+					actuators_data[11] = 0;		// LED4 blue
+					actuators_data[12] = 100;	// LED6 red
+					actuators_data[13] = 100;	// LED6 green
+					actuators_data[14] = 0;		// LED6 blue
+					actuators_data[15] = 100;	// LED8 red
+					actuators_data[16] = 100;	// LED8 green
+					actuators_data[17] = 0;		// LED8 blue
+					actuators_data[18] = 0; 	// Settings.
+					actuators_state = 0;
+					break;
+			}
+		}
+        messages[0].addr  = 0x1F;
+        messages[0].flags = 0;
+        messages[0].len   = ACTUATORS_SIZE;
+        messages[0].buf   = actuators_data;
+
+        packets.msgs      = messages;
+        packets.nmsgs     = 1;
+
+        ioctl(fh, I2C_RDWR, &packets);
+    }
+}
+
 int main(int argc,char *argv[]) {
    
    double init_xpos, init_ypos, init_theta;   
@@ -1089,6 +1204,8 @@ int main(int argc,char *argv[]) {
     yPos = init_ypos;
 
     ros::Rate loop_rate(rosRate);
+
+    initTest();
    
     while (ros::ok()) {
         updateSensorsData();
