@@ -215,7 +215,7 @@ void updateActuators() {
         zero_to_epuck_buff[16] = 0;        // LED8 green
         zero_to_epuck_buff[17] = 0;        // LED8 blue
     }
-    
+
 }
 
 // The chip has two alternative addresses based on the AD1 pin.
@@ -1055,7 +1055,7 @@ void initTest(){
             }
         }
         uint8_t checksum = 0;
-        for(i=0; i<(ACTUATORS_SIZE-1); i++) {
+        for(int i=0; i<(ACTUATORS_SIZE-1); i++) {
             checksum ^= actuators_data[i];
         }
         actuators_data[ACTUATORS_SIZE-1] = checksum;
