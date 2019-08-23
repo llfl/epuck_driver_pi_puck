@@ -952,7 +952,7 @@ void handlerLED(const std_msgs::UInt8MultiArray::ConstPtr& msg) {
 }
 
 void initTest(){
-        int8_t actuators_data[ACTUATORS_SIZE];
+        char actuators_data[ACTUATORS_SIZE];
         uint8_t counter = 0;
         uint8_t actuators_state = 0;
         struct i2c_rdwr_ioctl_data packets;
