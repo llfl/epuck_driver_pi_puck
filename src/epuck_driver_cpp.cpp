@@ -1062,8 +1062,22 @@ void initTest(){
 
         packets.msgs      = messages;
         packets.nmsgs     = 1;
+        
+        int trials = 0;
+        while(trials < 3) {
+		if(ioctl(fh, I2C_RDWR, &packets) < 0) {		
+			trials++;
+			continue;
+		}
+		break;
+	}
 
-        ioctl(fh, I2C_RDWR, &packets);
+	if(trials > 2) {
+		perror("update_robot_sensors_and_actuators: ");
+		return -1;
+	} else {
+		return 0;
+	}
     }
 }
 
