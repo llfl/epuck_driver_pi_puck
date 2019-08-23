@@ -1072,13 +1072,7 @@ void initTest(){
 		}
 		break;
 	}
-
-	if(trials > 2) {
-		perror("update_robot_sensors_and_actuators: ");
-		return -1;
-	} else {
-		return 0;
-	}
+    
     }
 }
 
