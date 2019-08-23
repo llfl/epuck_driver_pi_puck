@@ -215,7 +215,7 @@ void updateActuators() {
         zero_to_epuck_buff[16] = 0;        // LED8 green
         zero_to_epuck_buff[17] = 0;        // LED8 blue
     }
-
+    
 }
 
 // The chip has two alternative addresses based on the AD1 pin.
@@ -959,7 +959,7 @@ void initTest(){
     struct i2c_msg messages[1];
 
     std::cout << "[" << epuckname << "] " << "Init Test Start " << std::endl;
-    for(int i = 0; i<100; i++){
+    for(int j = 0; j<100; j++){
         counter++;
         if(counter == 20) {
             counter = 0;
@@ -1060,7 +1060,7 @@ void initTest(){
         }
         actuators_data[ACTUATORS_SIZE-1] = checksum;
 
-        std::cout << "[" << epuckname << "] " << "Init Testing"<< i << std::endl;
+        std::cout << "[" << epuckname << "] " << "Init Testing"<< j << std::endl;
         messages[0].addr  = 0x1F;
         messages[0].flags = 0;
         messages[0].len   = ACTUATORS_SIZE;
