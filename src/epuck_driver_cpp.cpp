@@ -17,16 +17,16 @@
 #include <opencv/cv.h>
 #include <sensor_msgs/LaserScan.h>
 extern "C" {
-	#include <stdio.h>
-	#include <stdint.h> 
-	#include <sys/types.h>
-	#include <sys/stat.h>
-	#include <fcntl.h>
-	#include <linux/i2c-dev.h> /* for I2C_SLAVE */
-	//#include <linux/i2c.h>
-	#include <sys/ioctl.h>
-	#include <stdlib.h>
-	#include <unistd.h>
+    #include <stdio.h>
+    #include <stdint.h> 
+    #include <sys/types.h>
+    #include <sys/stat.h>
+    #include <fcntl.h>
+    #include <linux/i2c-dev.h> /* for I2C_SLAVE */
+    //#include <linux/i2c.h>
+    #include <sys/ioctl.h>
+    #include <stdlib.h>
+    #include <unistd.h>
 }
 
 #define DEBUG_CONNECTION_INIT 1
@@ -68,15 +68,15 @@ extern "C" {
 #define MOT_STEP_DIST (WHEEL_CIRCUMFERENCE/1000.0)      // Distance for each motor step (meters); a complete turn is 1000 steps (0.000125 meters per step (m/steps)).
 #define ROBOT_RADIUS 0.035 // meters.
 
-#define LEDS_NUM 4 		// Number of LEDs on the robot.
-#define RGB_LEDS_NUM 4	// Number of RGB LEDs on the robot.
+#define LEDS_NUM 4         // Number of LEDs on the robot.
+#define RGB_LEDS_NUM 4    // Number of RGB LEDs on the robot.
 
 #define ACTUATORS_SIZE 19
 #define SENSORS_SIZE 30
 
 #define NUM_SAMPLES_CALIBRATION 20
-#define AK8963_ADDRESS 0x0C		// Address of magnetometer
-#define AK8963_XOUT_L 0x03		// data
+#define AK8963_ADDRESS 0x0C        // Address of magnetometer
+#define AK8963_XOUT_L 0x03        // data
 
 #define MPU9250_ADDRESS_AD1_0 0x68  // Device address when AD1 = 0
 #define MPU9250_ADDRESS_AD1_1 0x69
@@ -151,140 +151,140 @@ bool debug_enabled = false;
 uint8_t debug_count = 0;
 
 int initConnectionWithRobot(void) {
-    //fh = open("/dev/i2c-3", O_RDWR);	// open the I2C dev driver for bus 3
+    //fh = open("/dev/i2c-3", O_RDWR);    // open the I2C dev driver for bus 3
     // Set the I2C timeout to 20 ms (instead of 1 second). This need to be done on the "swticher" bus channel.
-	int fh1 = open("/dev/i2c-1", O_RDWR);
-	if(ioctl(fh1, I2C_TIMEOUT, 2) < 0) {
-		perror("fail to set i2c1 timeout");
-	}		
-	close(fh1);
-	fh = open("/dev/i2c-4", O_RDWR);	// open the I2C dev driver for bus 4
-	return 0;
+    int fh1 = open("/dev/i2c-1", O_RDWR);
+    if(ioctl(fh1, I2C_TIMEOUT, 2) < 0) {
+        perror("fail to set i2c1 timeout");
+    }        
+    close(fh1);
+    fh = open("/dev/i2c-4", O_RDWR);    // open the I2C dev driver for bus 4
+    return 0;
 }
 
 void closeConnection() {
-	close(fh);
+    close(fh);
 }
 
 void updateActuators() {
     
     char buff[36]; // 6 (initial size) + 3*LED_NUM (=10)
-	
+    
     if(changedActuators[MOTORS]) {
         changedActuators[MOTORS] = false;
-		zero_to_epuck_buff[0] = speedLeft&0xFF;
-		zero_to_epuck_buff[1] = speedLeft>>8;
-		zero_to_epuck_buff[2] = speedRight&0xFF;
-		zero_to_epuck_buff[3] = speedRight>>8;	
+        zero_to_epuck_buff[0] = speedLeft&0xFF;
+        zero_to_epuck_buff[1] = speedLeft>>8;
+        zero_to_epuck_buff[2] = speedRight&0xFF;
+        zero_to_epuck_buff[3] = speedRight>>8;    
     }
     
     if(changedActuators[LEDS]) {
-		changedActuators[LEDS] = false;
+        changedActuators[LEDS] = false;
         unsigned char i, pos = 0;
-		if(ledState[0]) {
-			zero_to_epuck_buff[5] |= 1;
-		} else {
-			zero_to_epuck_buff[5] &= ~(1);
-		}
-		if(ledState[1]) {
-			zero_to_epuck_buff[5] |= 2;
-		} else {
-			zero_to_epuck_buff[5] &= ~(2);
-		}
-		if(ledState[2]) {
-			zero_to_epuck_buff[5] |= 4;
-		} else {
-			zero_to_epuck_buff[5] &= ~(4);
-		}
-		if(ledState[3]) {
-			zero_to_epuck_buff[5] |= 8;
-		} else {
-			zero_to_epuck_buff[5] &= ~(8);
-		}		
-		//zero_to_epuck_buff[5] = 0x0;	// LED1, LED3, LED5, LED7 on/off flag
-		zero_to_epuck_buff[6] = 0;		// LED2 red
-		zero_to_epuck_buff[7] = 0;		// LED2 green
-		zero_to_epuck_buff[8] = 0;		// LED2 blue
-		zero_to_epuck_buff[9] = 0;		// LED4 red
-		zero_to_epuck_buff[10] = 0;		// LED4 green
-		zero_to_epuck_buff[11] = 0;		// LED4 blue
-		zero_to_epuck_buff[12] = 0;		// LED6 red
-		zero_to_epuck_buff[13] = 0;		// LED6 green
-		zero_to_epuck_buff[14] = 0;		// LED6 blue
-		zero_to_epuck_buff[15] = 0;		// LED8 red
-		zero_to_epuck_buff[16] = 0;		// LED8 green
-		zero_to_epuck_buff[17] = 0;		// LED8 blue
+        if(ledState[0]) {
+            zero_to_epuck_buff[5] |= 1;
+        } else {
+            zero_to_epuck_buff[5] &= ~(1);
+        }
+        if(ledState[1]) {
+            zero_to_epuck_buff[5] |= 2;
+        } else {
+            zero_to_epuck_buff[5] &= ~(2);
+        }
+        if(ledState[2]) {
+            zero_to_epuck_buff[5] |= 4;
+        } else {
+            zero_to_epuck_buff[5] &= ~(4);
+        }
+        if(ledState[3]) {
+            zero_to_epuck_buff[5] |= 8;
+        } else {
+            zero_to_epuck_buff[5] &= ~(8);
+        }        
+        //zero_to_epuck_buff[5] = 0x0;    // LED1, LED3, LED5, LED7 on/off flag
+        zero_to_epuck_buff[6] = 0;        // LED2 red
+        zero_to_epuck_buff[7] = 0;        // LED2 green
+        zero_to_epuck_buff[8] = 0;        // LED2 blue
+        zero_to_epuck_buff[9] = 0;        // LED4 red
+        zero_to_epuck_buff[10] = 0;        // LED4 green
+        zero_to_epuck_buff[11] = 0;        // LED4 blue
+        zero_to_epuck_buff[12] = 0;        // LED6 red
+        zero_to_epuck_buff[13] = 0;        // LED6 green
+        zero_to_epuck_buff[14] = 0;        // LED6 blue
+        zero_to_epuck_buff[15] = 0;        // LED8 red
+        zero_to_epuck_buff[16] = 0;        // LED8 green
+        zero_to_epuck_buff[17] = 0;        // LED8 blue
     }
 
 }
 
 // The chip has two alternative addresses based on the AD1 pin.
 void mpu9250_change_addr(void) {
-	if(imu_addr == MPU9250_ADDRESS_AD1_0) {
-		imu_addr = MPU9250_ADDRESS_AD1_1;
-	} else {
-		imu_addr = MPU9250_ADDRESS_AD1_0;
-	}
-	ioctl(fh, I2C_SLAVE, imu_addr);
+    if(imu_addr == MPU9250_ADDRESS_AD1_0) {
+        imu_addr = MPU9250_ADDRESS_AD1_1;
+    } else {
+        imu_addr = MPU9250_ADDRESS_AD1_0;
+    }
+    ioctl(fh, I2C_SLAVE, imu_addr);
 }
 
 int read_reg(int file, uint8_t reg, int count, uint8_t *data) {
 
-	if(write(file, &reg, 1) != 1) {
-		mpu9250_change_addr();
-		if(write(file, &reg, 1) != 1) {
-			perror("imu write error");
-			return -1;
-		}
-	}
+    if(write(file, &reg, 1) != 1) {
+        mpu9250_change_addr();
+        if(write(file, &reg, 1) != 1) {
+            perror("imu write error");
+            return -1;
+        }
+    }
 
-	if(read(file, data, count) != count) {
-		mpu9250_change_addr();
-		if(read(file, data, count) != count) {
-			printf("count=%d\n", count);
-			perror("imu read error");
-			return -1;
-		}
-	}
+    if(read(file, data, count) != count) {
+        mpu9250_change_addr();
+        if(read(file, data, count) != count) {
+            printf("count=%d\n", count);
+            perror("imu read error");
+            return -1;
+        }
+    }
 
-	return 0;
+    return 0;
 }
 
 void calibrateAcc() {
-	int samplesCount=0, i=0;
-	// reset and send configuration first?
-	for(i=0; i<NUM_SAMPLES_CALIBRATION; i++) {
-		if(read_reg(fh, ACCEL_XOUT_H, 6, accData) == 0) {	// for MPU9250 set just the address also for a multiple read with autoincrement
-			accSum[0] += (int16_t)(accData[1] + (accData[0]<<8)); // MPU9250 big-endian
-			accSum[1] += (int16_t)(accData[3] + (accData[2]<<8));
-			accSum[2] += (int16_t)(accData[5] + (accData[4]<<8));
-			samplesCount++;
-			//printf("acc sums: x=%d, y=%d, z=%d (samples=%d)\n", accSum[0], accSum[1], accSum[2], samplesCount);
-		}
-	}
-	accOffset[0] = (int16_t)((float)accSum[0]/(float)samplesCount);
-	accOffset[1] = (int16_t)((float)accSum[1]/(float)samplesCount);
-	accOffset[2] = (int16_t)((float)accSum[2]/(float)samplesCount);
-	printf("acc offsets: x=%d, y=%d, z=%d (samples=%d)\n", accOffset[0], accOffset[1], accOffset[2], samplesCount);
+    int samplesCount=0, i=0;
+    // reset and send configuration first?
+    for(i=0; i<NUM_SAMPLES_CALIBRATION; i++) {
+        if(read_reg(fh, ACCEL_XOUT_H, 6, accData) == 0) {    // for MPU9250 set just the address also for a multiple read with autoincrement
+            accSum[0] += (int16_t)(accData[1] + (accData[0]<<8)); // MPU9250 big-endian
+            accSum[1] += (int16_t)(accData[3] + (accData[2]<<8));
+            accSum[2] += (int16_t)(accData[5] + (accData[4]<<8));
+            samplesCount++;
+            //printf("acc sums: x=%d, y=%d, z=%d (samples=%d)\n", accSum[0], accSum[1], accSum[2], samplesCount);
+        }
+    }
+    accOffset[0] = (int16_t)((float)accSum[0]/(float)samplesCount);
+    accOffset[1] = (int16_t)((float)accSum[1]/(float)samplesCount);
+    accOffset[2] = (int16_t)((float)accSum[2]/(float)samplesCount);
+    printf("acc offsets: x=%d, y=%d, z=%d (samples=%d)\n", accOffset[0], accOffset[1], accOffset[2], samplesCount);
 
 }
 
 void calibrateGyro() {
-	int samplesCount=0, i=0;
-	// reset and send configuration first?
-	for(i=0; i<NUM_SAMPLES_CALIBRATION; i++) {
-		if(read_reg(fh, GYRO_XOUT_H, 6, gyroData) == 0) {	// // for MPU9250 set just the address also for a multiple read with autoincrement
-			gyroSum[0] += (int16_t)(gyroData[1] + (gyroData[0]<<8)); // MPU9250 big-endian
-			gyroSum[1] += (int16_t)(gyroData[3] + (gyroData[2]<<8));
-			gyroSum[2] += (int16_t)(gyroData[5] + (gyroData[4]<<8));
-			samplesCount++;
-			//printf("gyro sums: x=%d, y=%d, z=%d (samples=%d)\n", gyroSum[0], gyroSum[1], gyroSum[2], samplesCount);
-		}
-	}
-	gyroOffset[0] = (int16_t)((float)gyroSum[0]/(float)samplesCount);
-	gyroOffset[1] = (int16_t)((float)gyroSum[1]/(float)samplesCount);
-	gyroOffset[2] = (int16_t)((float)gyroSum[2]/(float)samplesCount);
-	printf("gyro offsets: x=%d, y=%d, z=%d (samples=%d)\n", gyroOffset[0], gyroOffset[1], gyroOffset[2], samplesCount);
+    int samplesCount=0, i=0;
+    // reset and send configuration first?
+    for(i=0; i<NUM_SAMPLES_CALIBRATION; i++) {
+        if(read_reg(fh, GYRO_XOUT_H, 6, gyroData) == 0) {    // // for MPU9250 set just the address also for a multiple read with autoincrement
+            gyroSum[0] += (int16_t)(gyroData[1] + (gyroData[0]<<8)); // MPU9250 big-endian
+            gyroSum[1] += (int16_t)(gyroData[3] + (gyroData[2]<<8));
+            gyroSum[2] += (int16_t)(gyroData[5] + (gyroData[4]<<8));
+            samplesCount++;
+            //printf("gyro sums: x=%d, y=%d, z=%d (samples=%d)\n", gyroSum[0], gyroSum[1], gyroSum[2], samplesCount);
+        }
+    }
+    gyroOffset[0] = (int16_t)((float)gyroSum[0]/(float)samplesCount);
+    gyroOffset[1] = (int16_t)((float)gyroSum[1]/(float)samplesCount);
+    gyroOffset[2] = (int16_t)((float)gyroSum[2]/(float)samplesCount);
+    printf("gyro offsets: x=%d, y=%d, z=%d (samples=%d)\n", gyroOffset[0], gyroOffset[1], gyroOffset[2], samplesCount);
 }
 
 void updateSensorsData() {
@@ -297,17 +297,17 @@ void updateSensorsData() {
     memset(epuck_to_zero_buff, 0x0, SENSORS_SIZE);
     FD_ZERO(&readfds);
     FD_SET(fh, &readfds);
-	ioctl(fh, I2C_SLAVE, 0x1F);			// tell the driver we want the device with address 0x1F (7-bits) on the I2C bus	=> main microcontroller.
+    ioctl(fh, I2C_SLAVE, 0x1F);            // tell the driver we want the device with address 0x1F (7-bits) on the I2C bus    => main microcontroller.
     retval = write(fh, zero_to_epuck_buff, ACTUATORS_SIZE);
-	if(retval != ACTUATORS_SIZE) {
-		perror("i2c write error");
-	}	
+    if(retval != ACTUATORS_SIZE) {
+        perror("i2c write error");
+    }    
     bytesRead = 0;
     if(DEBUG_UPDATE_SENSORS_TIMING)gettimeofday(&lastTime3, NULL);
     while(bytesRead < SENSORS_SIZE) {
         timeout.tv_sec=READ_TIMEOUT_SEC; // The timeout need to be set every time because the "select" may modify it.
         timeout.tv_usec=READ_TIMEOUT_USEC;                
-	if(DEBUG_UPDATE_SENSORS_TIMING)gettimeofday(&lastTime2, NULL);
+    if(DEBUG_UPDATE_SENSORS_TIMING)gettimeofday(&lastTime2, NULL);
         retval = select(fh+1, &readfds, NULL, NULL, &timeout);
         if(DEBUG_UPDATE_SENSORS_TIMING)gettimeofday(&currentTime2, NULL);
         if(DEBUG_UPDATE_SENSORS_TIMING)std::cout << "[" << epuckname << "] " << "sensors data read in " << double((currentTime2.tv_sec*1000000 + currentTime2.tv_usec)-(lastTime2.tv_sec*1000000 + lastTime2.tv_usec))/1000000.0 << " sec" << std::endl;
@@ -343,17 +343,17 @@ void updateSensorsData() {
             micData[0] = (unsigned char)epuck_to_zero_buff[16] | epuck_to_zero_buff[17]<<8;
             micData[1] = (unsigned char)epuck_to_zero_buff[18] | epuck_to_zero_buff[19]<<8;
             micData[2] = (unsigned char)epuck_to_zero_buff[20] | epuck_to_zero_buff[21]<<8;
-			micData[3] = (unsigned char)epuck_to_zero_buff[22] | epuck_to_zero_buff[23]<<8;
+            micData[3] = (unsigned char)epuck_to_zero_buff[22] | epuck_to_zero_buff[23]<<8;
             if(DEBUG_UPDATE_SENSORS_DATA)std::cout << "[" << epuckname << "] " << "mic: " << micData[0] << "," << micData[1] << "," << micData[2] << std::endl;
         }
-		selectorData = epuck_to_zero_buff[24];
+        selectorData = epuck_to_zero_buff[24];
         if(enabledSensors[MOTOR_POSITION]) {
             motorPositionData[0] = (unsigned char)epuck_to_zero_buff[25] | epuck_to_zero_buff[26]<<8;
             motorPositionData[1] = (unsigned char)epuck_to_zero_buff[27] | epuck_to_zero_buff[28]<<8;
             if(DEBUG_UPDATE_SENSORS_DATA)std::cout << "[" << epuckname << "] " << "position: " << motorPositionData[0] << "," << motorPositionData[1] << std::endl;
-        }  		
-		tvRemoteData = epuck_to_zero_buff[29];
-		
+        }          
+        tvRemoteData = epuck_to_zero_buff[29];
+        
         // if(enabledSensors[MOTOR_SPEED]) {
             // motorSpeedData[0] = (unsigned char)epuck_to_zero_buff[bufIndex] | epuck_to_zero_buff[bufIndex+1]<<8;
             // motorSpeedData[1] = (unsigned char)epuck_to_zero_buff[bufIndex+2] | epuck_to_zero_buff[bufIndex+3]<<8;
@@ -373,35 +373,35 @@ void updateSensorsData() {
     } else {
         if(DEBUG_UPDATE_SENSORS_DATA)std::cout << "[" << epuckname << "] " << "discard the sensors data" << std::endl;
     }
-	
-	if(enabledSensors[IMU]) {
-		ioctl(fh, I2C_SLAVE, imu_addr);
-	
-		read_reg(fh, ACCEL_XOUT_H, 6, accData);	
-		read_reg(fh, GYRO_XOUT_H, 6, gyroData);		
+    
+    if(enabledSensors[IMU]) {
+        ioctl(fh, I2C_SLAVE, imu_addr);
+    
+        read_reg(fh, ACCEL_XOUT_H, 6, accData);    
+        read_reg(fh, GYRO_XOUT_H, 6, gyroData);        
 
-		accValue[0] = (accData[1] + (accData[0]<<8));// MPU9250 big-endian
-		accValue[1] = (accData[3] + (accData[2]<<8));
-		accValue[2] = (accData[5] + (accData[4]<<8));
+        accValue[0] = (accData[1] + (accData[0]<<8));// MPU9250 big-endian
+        accValue[1] = (accData[3] + (accData[2]<<8));
+        accValue[2] = (accData[5] + (accData[4]<<8));
 
-		gyroValue[0] = (gyroData[1] + (gyroData[0]<<8));
-		gyroValue[1] = (gyroData[3] + (gyroData[2]<<8));
-		gyroValue[2] = (gyroData[5] + (gyroData[4]<<8));
-		
-		if(DEBUG_UPDATE_SENSORS_DATA)std::cout << "[" << epuckname << "] " << "acc: " << accValue[0] << "," << accValue[1] << "," << accValue[2] << std::endl;
-		if(DEBUG_UPDATE_SENSORS_DATA)std::cout << "[" << epuckname << "] " << "gyro: " << gyroValue[0] << "," << gyroValue[1] << "," << gyroValue[2] << std::endl;		
-	}	
-	
-	if(debug_enabled) {
-		debug_count++;
-		if(debug_count == 50) {
-			debug_count = 0;
-			std::cout << "[" << epuckname << "] " << "prox: " << proxData[0] << "," << proxData[1] << "," << proxData[2] << "," << proxData[3] << "," << proxData[4] << "," << proxData[5] << "," << proxData[6] << "," << proxData[7] << std::endl;
-			std::cout << "[" << epuckname << "] " << "mic: " << micData[0] << "," << micData[1] << "," << micData[2] << std::endl;
-			std::cout << "[" << epuckname << "] " << "position: " << motorPositionData[0] << "," << motorPositionData[1] << std::endl;
-		}
-	}
-	
+        gyroValue[0] = (gyroData[1] + (gyroData[0]<<8));
+        gyroValue[1] = (gyroData[3] + (gyroData[2]<<8));
+        gyroValue[2] = (gyroData[5] + (gyroData[4]<<8));
+        
+        if(DEBUG_UPDATE_SENSORS_DATA)std::cout << "[" << epuckname << "] " << "acc: " << accValue[0] << "," << accValue[1] << "," << accValue[2] << std::endl;
+        if(DEBUG_UPDATE_SENSORS_DATA)std::cout << "[" << epuckname << "] " << "gyro: " << gyroValue[0] << "," << gyroValue[1] << "," << gyroValue[2] << std::endl;        
+    }    
+    
+    if(debug_enabled) {
+        debug_count++;
+        if(debug_count == 50) {
+            debug_count = 0;
+            std::cout << "[" << epuckname << "] " << "prox: " << proxData[0] << "," << proxData[1] << "," << proxData[2] << "," << proxData[3] << "," << proxData[4] << "," << proxData[5] << "," << proxData[6] << "," << proxData[7] << std::endl;
+            std::cout << "[" << epuckname << "] " << "mic: " << micData[0] << "," << micData[1] << "," << micData[2] << std::endl;
+            std::cout << "[" << epuckname << "] " << "position: " << motorPositionData[0] << "," << motorPositionData[1] << std::endl;
+        }
+    }
+    
 }
 
 void updateRosInfo() {
@@ -807,7 +807,7 @@ void updateRosInfo() {
         br.sendTransform(odomTrans);
     }
     
-    if(enabledSensors[IMU]) {	
+    if(enabledSensors[IMU]) {    
         std::stringstream ss;
         ss << epuckname << "/base_link";
         imuMsg.header.frame_id = ss.str();
@@ -851,7 +851,7 @@ void updateRosInfo() {
         imuMsg.orientation_covariance[8] = 0.01;
         imuPublisher.publish(imuMsg);
     }
-	
+    
     // if(enabledSensors[MOTOR_SPEED]) {
         // std::stringstream ss;
         // ss << epuckname << "/base_link";
@@ -952,113 +952,113 @@ void handlerLED(const std_msgs::UInt8MultiArray::ConstPtr& msg) {
 }
 
 void initTest(){
-        char actuators_data[ACTUATORS_SIZE];
-        uint8_t counter = 0;
-        uint8_t actuators_state = 0;
-        struct i2c_rdwr_ioctl_data packets;
-        struct i2c_msg messages[1];
+    char actuators_data[ACTUATORS_SIZE];
+    uint8_t counter = 0;
+    uint8_t actuators_state = 0;
+    struct i2c_rdwr_ioctl_data packets;
+    struct i2c_msg messages[1];
 
     std::cout << "[" << epuckname << "] " << "Init Test Start " << std::endl;
-    for(int i = 0; i<10; i++){
+    for(int i = 0; i<100; i++){
         counter++;
-		if(counter == 20) {
-			counter = 0;
-			switch(actuators_state) {
-				case 0:
-					actuators_data[0] = 0;		// Left speed: 512
-					actuators_data[1] = 2;
-					actuators_data[2] = 0;		// Right speed: -512
-					actuators_data[3] = 0xFE;
-					actuators_data[4] = 0; 		// Speaker sound
-					actuators_data[5] = 0x0F;	// LED1, LED3, LED5, LED7 on/off flag
-					actuators_data[6] = 100;	// LED2 red
-					actuators_data[7] = 0;		// LED2 green
-					actuators_data[8] = 0;		// LED2 blue
-					actuators_data[9] = 100;	// LED4 red
-					actuators_data[10] = 0;		// LED4 green
-					actuators_data[11] = 0;		// LED4 blue
-					actuators_data[12] = 100;	// LED6 red
-					actuators_data[13] = 0;		// LED6 green
-					actuators_data[14] = 0;		// LED6 blue
-					actuators_data[15] = 100;	// LED8 red
-					actuators_data[16] = 0;		// LED8 green
-					actuators_data[17] = 0;		// LED8 blue
-					actuators_data[18] = 0; 	// Settings.
-					actuators_state = 1;
-					break;
-				case 1:
-					actuators_data[0] = 0;		// Left speed: 0
-					actuators_data[1] = 0;
-					actuators_data[2] = 0;		// Right speed: 0
-					actuators_data[3] = 0;
-					actuators_data[4] = 0; 		// Speaker sound
-					actuators_data[5] = 0x0;	// LED1, LED3, LED5, LED7 on/off flag
-					actuators_data[6] = 0;		// LED2 red
-					actuators_data[7] = 100;	// LED2 green
-					actuators_data[8] = 0;		// LED2 blue
-					actuators_data[9] = 0;		// LED4 red
-					actuators_data[10] = 100;	// LED4 green
-					actuators_data[11] = 0;		// LED4 blue
-					actuators_data[12] = 0;		// LED6 red
-					actuators_data[13] = 100;	// LED6 green
-					actuators_data[14] = 0;		// LED6 blue
-					actuators_data[15] = 0;		// LED8 red
-					actuators_data[16] = 100;	// LED8 green
-					actuators_data[17] = 0;		// LED8 blue
-					actuators_data[18] = 0;		// Settings.
-					actuators_state = 2;
-					break;
-				case 2:
-					actuators_data[0] = 0;		// Left speed: 512
-					actuators_data[1] = 2;
-					actuators_data[2] = 0;		// Right speed: -512
-					actuators_data[3] = 0xFE;
-					actuators_data[4] = 0; 		// Speaker sound
-					actuators_data[5] = 0x0F;	// LED1, LED3, LED5, LED7 on/off flag
-					actuators_data[6] = 0;		// LED2 red
-					actuators_data[7] = 0;		// LED2 green
-					actuators_data[8] = 100;	// LED2 blue
-					actuators_data[9] = 0;		// LED4 red
-					actuators_data[10] = 0;		// LED4 green
-					actuators_data[11] = 100;	// LED4 blue
-					actuators_data[12] = 0;		// LED6 red
-					actuators_data[13] = 0;		// LED6 green
-					actuators_data[14] = 100;	// LED6 blue
-					actuators_data[15] = 0;		// LED8 red
-					actuators_data[16] = 0;		// LED8 green
-					actuators_data[17] = 100;	// LED8 blue
-					actuators_data[18] = 0; 	// Settings.
-					actuators_state = 3;
-					break;
-				case 3:
-					actuators_data[0] = 0;		// Left speed: 0
-					actuators_data[1] = 0;
-					actuators_data[2] = 0;		// Right speed: 0
-					actuators_data[3] = 0;
-					actuators_data[4] = 0; 		// Speaker sound
-					actuators_data[5] = 0x0;	// LED1, LED3, LED5, LED7 on/off flag
-					actuators_data[6] = 100;	// LED2 red
-					actuators_data[7] = 100;	// LED2 green
-					actuators_data[8] = 0;		// LED2 blue
-					actuators_data[9] = 100;	// LED4 red
-					actuators_data[10] = 100;	// LED4 green
-					actuators_data[11] = 0;		// LED4 blue
-					actuators_data[12] = 100;	// LED6 red
-					actuators_data[13] = 100;	// LED6 green
-					actuators_data[14] = 0;		// LED6 blue
-					actuators_data[15] = 100;	// LED8 red
-					actuators_data[16] = 100;	// LED8 green
-					actuators_data[17] = 0;		// LED8 blue
-					actuators_data[18] = 0; 	// Settings.
-					actuators_state = 0;
-					break;
-			}
-		}
+        if(counter == 20) {
+            counter = 0;
+            switch(actuators_state) {
+                case 0:
+                    actuators_data[0] = 0;        // Left speed: 512
+                    actuators_data[1] = 2;
+                    actuators_data[2] = 0;        // Right speed: -512
+                    actuators_data[3] = 0xFE;
+                    actuators_data[4] = 0;         // Speaker sound
+                    actuators_data[5] = 0x0F;    // LED1, LED3, LED5, LED7 on/off flag
+                    actuators_data[6] = 100;    // LED2 red
+                    actuators_data[7] = 0;        // LED2 green
+                    actuators_data[8] = 0;        // LED2 blue
+                    actuators_data[9] = 100;    // LED4 red
+                    actuators_data[10] = 0;        // LED4 green
+                    actuators_data[11] = 0;        // LED4 blue
+                    actuators_data[12] = 100;    // LED6 red
+                    actuators_data[13] = 0;        // LED6 green
+                    actuators_data[14] = 0;        // LED6 blue
+                    actuators_data[15] = 100;    // LED8 red
+                    actuators_data[16] = 0;        // LED8 green
+                    actuators_data[17] = 0;        // LED8 blue
+                    actuators_data[18] = 0;     // Settings.
+                    actuators_state = 1;
+                    break;
+                case 1:
+                    actuators_data[0] = 0;        // Left speed: 0
+                    actuators_data[1] = 0;
+                    actuators_data[2] = 0;        // Right speed: 0
+                    actuators_data[3] = 0;
+                    actuators_data[4] = 0;         // Speaker sound
+                    actuators_data[5] = 0x0;    // LED1, LED3, LED5, LED7 on/off flag
+                    actuators_data[6] = 0;        // LED2 red
+                    actuators_data[7] = 100;    // LED2 green
+                    actuators_data[8] = 0;        // LED2 blue
+                    actuators_data[9] = 0;        // LED4 red
+                    actuators_data[10] = 100;    // LED4 green
+                    actuators_data[11] = 0;        // LED4 blue
+                    actuators_data[12] = 0;        // LED6 red
+                    actuators_data[13] = 100;    // LED6 green
+                    actuators_data[14] = 0;        // LED6 blue
+                    actuators_data[15] = 0;        // LED8 red
+                    actuators_data[16] = 100;    // LED8 green
+                    actuators_data[17] = 0;        // LED8 blue
+                    actuators_data[18] = 0;        // Settings.
+                    actuators_state = 2;
+                    break;
+                case 2:
+                    actuators_data[0] = 0;        // Left speed: 512
+                    actuators_data[1] = 2;
+                    actuators_data[2] = 0;        // Right speed: -512
+                    actuators_data[3] = 0xFE;
+                    actuators_data[4] = 0;         // Speaker sound
+                    actuators_data[5] = 0x0F;    // LED1, LED3, LED5, LED7 on/off flag
+                    actuators_data[6] = 0;        // LED2 red
+                    actuators_data[7] = 0;        // LED2 green
+                    actuators_data[8] = 100;    // LED2 blue
+                    actuators_data[9] = 0;        // LED4 red
+                    actuators_data[10] = 0;        // LED4 green
+                    actuators_data[11] = 100;    // LED4 blue
+                    actuators_data[12] = 0;        // LED6 red
+                    actuators_data[13] = 0;        // LED6 green
+                    actuators_data[14] = 100;    // LED6 blue
+                    actuators_data[15] = 0;        // LED8 red
+                    actuators_data[16] = 0;        // LED8 green
+                    actuators_data[17] = 100;    // LED8 blue
+                    actuators_data[18] = 0;     // Settings.
+                    actuators_state = 3;
+                    break;
+                case 3:
+                    actuators_data[0] = 0;        // Left speed: 0
+                    actuators_data[1] = 0;
+                    actuators_data[2] = 0;        // Right speed: 0
+                    actuators_data[3] = 0;
+                    actuators_data[4] = 0;         // Speaker sound
+                    actuators_data[5] = 0x0;    // LED1, LED3, LED5, LED7 on/off flag
+                    actuators_data[6] = 100;    // LED2 red
+                    actuators_data[7] = 100;    // LED2 green
+                    actuators_data[8] = 0;        // LED2 blue
+                    actuators_data[9] = 100;    // LED4 red
+                    actuators_data[10] = 100;    // LED4 green
+                    actuators_data[11] = 0;        // LED4 blue
+                    actuators_data[12] = 100;    // LED6 red
+                    actuators_data[13] = 100;    // LED6 green
+                    actuators_data[14] = 0;        // LED6 blue
+                    actuators_data[15] = 100;    // LED8 red
+                    actuators_data[16] = 100;    // LED8 green
+                    actuators_data[17] = 0;        // LED8 blue
+                    actuators_data[18] = 0;     // Settings.
+                    actuators_state = 0;
+                    break;
+            }
+        }
         uint8_t checksum = 0;
-		for(i=0; i<(ACTUATORS_SIZE-1); i++) {
-			checksum ^= actuators_data[i];
-		}
-		actuators_data[ACTUATORS_SIZE-1] = checksum;
+        for(i=0; i<(ACTUATORS_SIZE-1); i++) {
+            checksum ^= actuators_data[i];
+        }
+        actuators_data[ACTUATORS_SIZE-1] = checksum;
 
         std::cout << "[" << epuckname << "] " << "Init Testing"<< i << std::endl;
         messages[0].addr  = 0x1F;
@@ -1071,13 +1071,13 @@ void initTest(){
 
         int trials = 0;
         while(trials < 3) {
-        std::cout << "[" << epuckname << "] " << "write"<< trials << std::endl;
-		if(ioctl(fh, I2C_RDWR, &packets) < 0) {		
-			trials++;
-			continue;
-		}
-		break;
-	}
+            std::cout << "[" << epuckname << "] " << "write"<< trials << std::endl;
+            if(ioctl(fh, I2C_RDWR, &packets) < 0) {        
+                trials++;
+                continue;
+            }
+            break;
+        }
     
     }
 }
@@ -1088,7 +1088,7 @@ int main(int argc,char *argv[]) {
    int rosRate = 0;
    int i = 0;
    
-   	zero_to_epuck_buff[4] = 3; // Speaker => 3 = no sound.
+       zero_to_epuck_buff[4] = 3; // Speaker => 3 = no sound.
    
     /**
     * The ros::init() function needs to see argc and argv so that it can perform
@@ -1121,8 +1121,8 @@ int main(int argc,char *argv[]) {
     np.param("motor_position", enabledSensors[MOTOR_POSITION], false);
     np.param("microphone", enabledSensors[MICROPHONE], false);
     np.param("ros_rate", rosRate, 20);    
-	np.param("debug", debug_enabled, false);
-	
+    np.param("debug", debug_enabled, false);
+    
     if(DEBUG_ROS_PARAMS) {
         std::cout << "[" << epuckname << "] " << "epuck name: " << epuckname << std::endl;
         std::cout << "[" << epuckname << "] " << "init pose: " << init_xpos << ", " << init_ypos << ", " << theta << std::endl;
@@ -1133,18 +1133,18 @@ int main(int argc,char *argv[]) {
         std::cout << "[" << epuckname << "] " << "motor position enabled: " << enabledSensors[MOTOR_POSITION] << std::endl;
         std::cout << "[" << epuckname << "] " << "microphone enabled: " << enabledSensors[MICROPHONE] << std::endl;
         std::cout << "[" << epuckname << "] " << "ros rate: " << rosRate << std::endl;
-		std::cout << "[" << epuckname << "] " << "debug enabled: " << debug_enabled << std::endl;
+        std::cout << "[" << epuckname << "] " << "debug enabled: " << debug_enabled << std::endl;
     }
     
 
     if(initConnectionWithRobot()<0) {
-		return -1;
+        return -1;
     }
     
     if(enabledSensors[IMU]) {
-		ioctl(fh, I2C_SLAVE, imu_addr);	
-		calibrateAcc();
-		calibrateGyro();
+        ioctl(fh, I2C_SLAVE, imu_addr);    
+        calibrateAcc();
+        calibrateGyro();
         imuPublisher = n.advertise<sensor_msgs::Imu>("imu", 10);
     }
     if(enabledSensors[MOTOR_SPEED]) {
