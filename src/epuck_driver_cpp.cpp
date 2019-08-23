@@ -958,7 +958,7 @@ void initTest(){
         struct i2c_rdwr_ioctl_data packets;
         struct i2c_msg messages[1];
 
-    
+    std::cout << "[" << epuckname << "] " << "Init Test Start " << std::endl;
     for(int i = 0; i<10; i++){
         counter++;
 		if(counter == 20) {
@@ -1054,6 +1054,7 @@ void initTest(){
 					break;
 			}
 		}
+        std::cout << "[" << epuckname << "] " << "Init Testing"<< i << std::endl;
         messages[0].addr  = 0x1F;
         messages[0].flags = 0;
         messages[0].len   = ACTUATORS_SIZE;
