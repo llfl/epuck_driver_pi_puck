@@ -1066,7 +1066,7 @@ void initTest(){
         }
         actuators_data[ACTUATORS_SIZE-1] = checksum;
 
-        std::cout << "[" << epuckname << "] " << "Init Testing"<< j << std::endl;
+        std::cout << "[" << epuckname << "] " << "Init Testing"<< i << std::endl;
         messages[0].addr  = 0x1F;
         messages[0].flags = 0;
         messages[0].len   = ACTUATORS_SIZE;
