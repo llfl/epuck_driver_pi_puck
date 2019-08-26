@@ -973,7 +973,7 @@ void initTest(){
     struct i2c_msg messages[1];
 
     std::cout << "[" << epuckname << "] " << "Init Test Start " << std::endl;
-    for(int i = 0; i<240; i++){
+    for(int i = 0; i<480; i++){
         counter++;
         if(counter == 20) {
             counter = 0;
