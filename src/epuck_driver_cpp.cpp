@@ -215,6 +215,7 @@ void updateActuators() {
         zero_to_epuck_buff[16] = 0;        // LED8 green
         zero_to_epuck_buff[17] = 0;        // LED8 blue
     }
+    zero_to_epuck_buff[4] = 0; // Speaker music
     uint8_t checksum = 0;
     for(int i=0; i<(ACTUATORS_SIZE-1); i++) {
         checksum ^= zero_to_epuck_buff[i];
