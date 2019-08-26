@@ -215,6 +215,11 @@ void updateActuators() {
         zero_to_epuck_buff[16] = 0;        // LED8 green
         zero_to_epuck_buff[17] = 0;        // LED8 blue
     }
+    uint8_t checksum = 0;
+    for(int i=0; i<(ACTUATORS_SIZE-1); i++) {
+        checksum ^= zero_to_epuck_buff[i];
+    }
+    zero_to_epuck_buff[ACTUATORS_SIZE-1] = checksum;
 
 }
 
