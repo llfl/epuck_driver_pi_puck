@@ -303,11 +303,18 @@ void updateSensorsData() {
     memset(epuck_to_zero_buff, 0x0, SENSORS_SIZE);
     FD_ZERO(&readfds);
     FD_SET(fh, &readfds);
-    ioctl(fh, I2C_SLAVE, 0x1F);            // tell the driver we want the device with address 0x1F (7-bits) on the I2C bus    => main microcontroller.
-    retval = write(fh, zero_to_epuck_buff, ACTUATORS_SIZE);
-    if(retval != ACTUATORS_SIZE) {
-        perror("i2c write error");
-    }    
+    int trials = 0;
+    while(trials < 3) {
+        ioctl(fh, I2C_SLAVE, 0x1F);            // tell the driver we want the device with address 0x1F (7-bits) on the I2C bus    => main microcontroller.
+        retval = write(fh, zero_to_epuck_buff, ACTUATORS_SIZE);
+        if(retval != ACTUATORS_SIZE) {
+            perror("i2c write error, and retrying");
+            trials++;
+            continue;
+        }
+        break;
+    }
+
     bytesRead = 0;
     if(DEBUG_UPDATE_SENSORS_TIMING)gettimeofday(&lastTime3, NULL);
     while(bytesRead < SENSORS_SIZE) {
