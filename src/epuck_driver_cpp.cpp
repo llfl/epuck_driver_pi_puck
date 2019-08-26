@@ -965,7 +965,7 @@ void initTest(){
     struct i2c_msg messages[1];
 
     std::cout << "[" << epuckname << "] " << "Init Test Start " << std::endl;
-    for(int i = 0; i<100; i++){
+    for(int i = 0; i<200; i++){
         counter++;
         if(counter == 20) {
             counter = 0;
@@ -1061,8 +1061,8 @@ void initTest(){
             }
         }
         uint8_t checksum = 0;
-        for(int i=0; i<(ACTUATORS_SIZE-1); i++) {
-            checksum ^= actuators_data[i];
+        for(int j=0; j<(ACTUATORS_SIZE-1); j++) {
+            checksum ^= actuators_data[j];
         }
         actuators_data[ACTUATORS_SIZE-1] = checksum;
 
