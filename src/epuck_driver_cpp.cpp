@@ -216,6 +216,7 @@ void updateActuators() {
         zero_to_epuck_buff[17] = 0;        // LED8 blue
     }
     zero_to_epuck_buff[4] = 0; // Speaker music
+
     uint8_t checksum = 0;
     for(int i=0; i<(ACTUATORS_SIZE-1); i++) {
         checksum ^= zero_to_epuck_buff[i];
@@ -948,7 +949,7 @@ void handlerVelocity(const geometry_msgs::Twist::ConstPtr& msg) {
     changedActuators[MOTORS] = true;
 
     if(DEBUG_SPEED_RECEIVED)std::cout << "[" << epuckname << "] " << "new speed: " << speedLeft << ", " << speedRight << std::endl;
-    
+    std::cout << "[" << epuckname << "] " << "new speed: " << speedLeft << ", " << speedRight << std::endl;
 }
 
 void handlerLED(const std_msgs::UInt8MultiArray::ConstPtr& msg) {
@@ -972,7 +973,7 @@ void initTest(){
     struct i2c_msg messages[1];
 
     std::cout << "[" << epuckname << "] " << "Init Test Start " << std::endl;
-    for(int i = 0; i<200; i++){
+    for(int i = 0; i<240; i++){
         counter++;
         if(counter == 20) {
             counter = 0;
@@ -1073,7 +1074,7 @@ void initTest(){
         }
         actuators_data[ACTUATORS_SIZE-1] = checksum;
 
-        std::cout << "[" << epuckname << "] " << "Init Testing"<< i << std::endl;
+        //std::cout << "[" << epuckname << "] " << "Init Testing"<< i << std::endl;
         messages[0].addr  = 0x1F;
         messages[0].flags = 0;
         messages[0].len   = ACTUATORS_SIZE;
@@ -1084,7 +1085,7 @@ void initTest(){
 
         int trials = 0;
         while(trials < 3) {
-            std::cout << "[" << epuckname << "] " << "write"<< trials << std::endl;
+            //std::cout << "[" << epuckname << "] " << "write"<< trials << std::endl;
             if(ioctl(fh, I2C_RDWR, &packets) < 0) {        
                 trials++;
                 continue;
