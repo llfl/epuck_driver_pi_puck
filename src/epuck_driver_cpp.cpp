@@ -148,6 +148,7 @@ int32_t gyroSum[3] = {0, 0, 0};
 int16_t gyroOffset[3] = {0, 0, 0};
 
 bool debug_enabled = false;
+bool init_test = false;
 uint8_t debug_count = 0;
 
 int initConnectionWithRobot(void) {
