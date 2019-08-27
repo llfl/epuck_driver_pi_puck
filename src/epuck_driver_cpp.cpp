@@ -945,7 +945,8 @@ void handlerVelocity(const geometry_msgs::Twist::ConstPtr& msg) {
     changedActuators[MOTORS] = true;
 
     if(DEBUG_SPEED_RECEIVED)std::cout << "[" << epuckname << "] " << "new speed: " << speedLeft << ", " << speedRight << std::endl;
-    std::cout << "[" << epuckname << "] " << "new speed: " << speedLeft << ", " << speedRight << std::endl;
+
+    //std::cout << "[" << epuckname << "] " << "new speed: " << speedLeft << ", " << speedRight << std::endl;
 }
 
 void handlerLED(const std_msgs::UInt8MultiArray::ConstPtr& msg) {
@@ -1145,6 +1146,7 @@ int main(int argc,char *argv[]) {
     np.param("microphone", enabledSensors[MICROPHONE], false);
     np.param("ros_rate", rosRate, 20);    
     np.param("debug", debug_enabled, false);
+    np.param("test", init_test, false);
     
     if(DEBUG_ROS_PARAMS) {
         std::cout << "[" << epuckname << "] " << "epuck name: " << epuckname << std::endl;
@@ -1243,8 +1245,10 @@ int main(int argc,char *argv[]) {
     yPos = init_ypos;
 
     ros::Rate loop_rate(rosRate);
-
-    initTest();
+    if(init_test){
+        initTest();
+    }
+    
    
     while (ros::ok()) {
         updateSensorsData();
