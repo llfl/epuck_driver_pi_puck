@@ -966,11 +966,12 @@ void handlerLED(const std_msgs::UInt8MultiArray::ConstPtr& msg) {
 }
 
 void initTest(){
-    char actuators_data[ACTUATORS_SIZE];
+    char actuators_data[20];
+    char sensors_data[47];
     uint8_t counter = 0;
     uint8_t actuators_state = 0;
     struct i2c_rdwr_ioctl_data packets;
-    struct i2c_msg messages[1];
+    struct i2c_msg messages[2];
 
     std::cout << "[" << epuckname << "] " << "Init Test Start " << std::endl;
     for(int i = 0; i<480; i++){
@@ -1069,19 +1070,26 @@ void initTest(){
             }
         }
         uint8_t checksum = 0;
-        for(int j=0; j<(ACTUATORS_SIZE-1); j++) {
+        for(int j=0; j<(19); j++) {
             checksum ^= actuators_data[j];
         }
-        actuators_data[ACTUATORS_SIZE-1] = checksum;
+        actuators_data[19] = checksum;
 
         //std::cout << "[" << epuckname << "] " << "Init Testing"<< i << std::endl;
         messages[0].addr  = 0x1F;
         messages[0].flags = 0;
-        messages[0].len   = ACTUATORS_SIZE;
+        messages[0].len   = 20;
         messages[0].buf   = actuators_data;
 
+        messages[1].addr  = 0x1F;
+        messages[1].flags = I2C_M_RD;
+        messages[1].len   = 47;
+        messages[1].buf   = sensors_data;
+
+
+
         packets.msgs      = messages;
-        packets.nmsgs     = 1;
+        packets.nmsgs     = 2;
 
         int trials = 0;
         while(trials < 3) {
@@ -1092,6 +1100,11 @@ void initTest(){
             }
             break;
         }
+        for(int i =0; i<47;++i){
+            std::cout <<sensors_data[i]<<", ";
+        }
+        std::cout <<std::endl;
+
     
     }
 }
