@@ -1101,7 +1101,7 @@ void initTest(){
             break;
         }
         for(int i =0; i<47;++i){
-            std::cout <<sensors_data[i]<<", ";
+            std::cout <<int(sensors_data[i])<<", ";
         }
         std::cout <<std::endl;
 
