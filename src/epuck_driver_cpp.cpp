@@ -1160,6 +1160,7 @@ int main(int argc,char *argv[]) {
         std::cout << "[" << epuckname << "] " << "microphone enabled: " << enabledSensors[MICROPHONE] << std::endl;
         std::cout << "[" << epuckname << "] " << "ros rate: " << rosRate << std::endl;
         std::cout << "[" << epuckname << "] " << "debug enabled: " << debug_enabled << std::endl;
+        std::cout << "[" << epuckname << "] " << "test enabled: " << init_test << std::endl;
     }
     
 
@@ -1258,9 +1259,9 @@ int main(int argc,char *argv[]) {
         ros::spinOnce();
         loop_rate.sleep();    // Do not call "sleep" otherwise the bluetooth communication will hang.
                                 // We communicate as fast as possible, this shouldn't be a problem...
-        if(consecutiveReadTimeout >= MAX_CONSECUTIVE_TIMEOUT) { // We have connection problems, stop here.
-            break;
-        }
+        // if(consecutiveReadTimeout >= MAX_CONSECUTIVE_TIMEOUT) { // We have connection problems, stop here.
+        //     break;
+        // }
     }
 
     closeConnection();
