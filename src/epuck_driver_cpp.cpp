@@ -1259,9 +1259,9 @@ int main(int argc,char *argv[]) {
         ros::spinOnce();
         loop_rate.sleep();    // Do not call "sleep" otherwise the bluetooth communication will hang.
                                 // We communicate as fast as possible, this shouldn't be a problem...
-        // if(consecutiveReadTimeout >= MAX_CONSECUTIVE_TIMEOUT) { // We have connection problems, stop here.
-        //     break;
-        // }
+        if(consecutiveReadTimeout >= MAX_CONSECUTIVE_TIMEOUT) { // We have connection problems, stop here.
+            break;
+        }
     }
 
     closeConnection();
