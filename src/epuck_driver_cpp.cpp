@@ -173,10 +173,10 @@ void updateActuators() {
     
     if(changedActuators[MOTORS]) {
         changedActuators[MOTORS] = false;
-        zero_to_epuck_buff[0] = uint8(speedLeft&0x00FF);
-        zero_to_epuck_buff[1] = uint8(speedLeft>>8);
-        zero_to_epuck_buff[2] = uint8(speedRight&0x00FF);
-        zero_to_epuck_buff[3] = uint8(speedRight>>8);    
+        zero_to_epuck_buff[0] = uint8_t(speedLeft&0x00FF);
+        zero_to_epuck_buff[1] = uint8_t(speedLeft>>8);
+        zero_to_epuck_buff[2] = uint8_t(speedRight&0x00FF);
+        zero_to_epuck_buff[3] = uint8_t(speedRight>>8);    
     }
     
     if(changedActuators[LEDS]) {
