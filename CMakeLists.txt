@@ -107,14 +107,17 @@ include_directories(
 
 ## Declare a cpp executable
 add_executable(epuck_driver_cpp src/epuck_driver_cpp.cpp)
+add_executable(epuck_keyboard_ctl ctl/keyboard_ctl.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
 # add_dependencies(epuck_driver_cpp_node epuck_driver_cpp_generate_messages_cpp)
+add_dependencies(epuck_keyboard_ctl epuck_driver_cpp)
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(epuck_driver_cpp bluetooth ${catkin_LIBRARIES} ${OpenCV_LIBRARIES}
 )
+target_link_libraries(epuck_keyboard_ctl ${catkin_LIBRARIES})
 
 #############
 ## Install ##
