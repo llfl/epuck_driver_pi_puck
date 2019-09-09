@@ -947,7 +947,7 @@ void handlerVelocity(const geometry_msgs::Twist::ConstPtr& msg) {
 
     if(DEBUG_SPEED_RECEIVED)std::cout << "[" << epuckname << "] " << "new speed: " << speedLeft << ", " << speedRight << std::endl;
 
-    //std::cout << "[" << epuckname << "] " << "new speed: " << speedLeft << ", " << speedRight << std::endl;
+    std::cout << "[" << epuckname << "] " << "new speed: " << speedLeft << ", " << speedRight << std::endl;
 }
 
 void handlerLED(const std_msgs::UInt8MultiArray::ConstPtr& msg) {
