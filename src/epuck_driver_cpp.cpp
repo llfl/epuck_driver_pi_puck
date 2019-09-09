@@ -177,6 +177,7 @@ void updateActuators() {
         zero_to_epuck_buff[1] = uint8_t(speedLeft>>8);
         zero_to_epuck_buff[2] = uint8_t(speedRight&0x00FF);
         zero_to_epuck_buff[3] = uint8_t(speedRight>>8);    
+        std::cout << "set left speed:" << zero_to_epuck_buff[0] << zero_to_epuck_buff[1] << ", set left speed:" << zero_to_epuck_buff[2] << zero_to_epuck_buff[3] << std::endl;
     }
     
     if(changedActuators[LEDS]) {
